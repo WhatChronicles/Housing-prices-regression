@@ -1,0 +1,13 @@
+from sklearn.preprocessing import LabelEncoder
+import joblib
+
+# Fit encoders
+sex_encoder = LabelEncoder().fit(df["Sex"])
+embarked_encoder = LabelEncoder().fit(df["Embarked"])
+
+# Save them together
+encoders = {
+    "sex": sex_encoder,
+    "embarked": embarked_encoder
+}
+joblib.dump(encoders, "models/label_encoders.pkl")
