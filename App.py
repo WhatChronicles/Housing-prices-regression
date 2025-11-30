@@ -1,9 +1,8 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from src.model import train_models  # Optional: if you want to retrain from UI
+from src.model import train_models 
 
-# ✅ Load model and encoders
 @st.cache_resource
 def load_model():
     return joblib.load("models/best_model.pkl")
@@ -12,24 +11,21 @@ def load_model():
 def load_encoders():
     return joblib.load("models/label_encoders.pkl")
 
-# ✅ Encode user input
 def preprocess_input(user_input: dict, encoders: dict) -> pd.DataFrame:
     processed = user_input.copy()
     for col, encoder in encoders.items():
         processed[col] = encoder.transform([processed[col]])[0]
     return pd.DataFrame([processed])
 
-# ✅ Predict survival
+
 def predict_survival(input_df: pd.DataFrame, model) -> int:
     prediction = model.predict(input_df)[0]
     return prediction
 
-# ✅ Streamlit UI
 st.title("🚢 Titanic Survival Predictor")
 
 st.markdown("Enter passenger details to predict survival:")
 
-# Collect user input
 sex = st.selectbox("Sex", ["male", "female"])
 embarked = st.selectbox("Embarked", ["C", "Q", "S"])
 pclass = st.selectbox("Passenger Class (Pclass)", [1, 2, 3])
@@ -41,14 +37,13 @@ parch = st.number_input("Parents/Children Aboard (Parch)", min_value=0, max_valu
 user_input = {
     "Sex": sex,
     "Embarked": embarked,
-    "Pclass": str(pclass),  # Ensure string for LabelEncoder
+    "Pclass": str(pclass), 
     "Age": age,
     "Fare": fare,
     "SibSp": sibsp,
     "Parch": parch
 }
 
-# Predict button
 if st.button("Predict Survival"):
     model = load_model()
     encoders = load_encoders()
